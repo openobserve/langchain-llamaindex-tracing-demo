@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+*.env
+faiss_index/
+llamaindex_storage/
+__pycache__/
+*.log
+.DS_Store

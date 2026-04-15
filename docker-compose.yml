@@ -1,0 +1,44 @@
+services:
+  langchain-backend:
+    profiles: ["langchain"]
+    build: ./langchain-backend
+    ports:
+      - 8001:8001
+    environment:
+      - OPENOBSERVE_URL=${OPENOBSERVE_URL}
+      - OPENOBSERVE_ORG=${OPENOBSERVE_ORG}
+      - OPENOBSERVE_AUTH_TOKEN=${OPENOBSERVE_AUTH_TOKEN}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - DEBUG=${DEBUG:-false}
+      - SERVICE_NAME=${LANGCHAIN_SERVICE_NAME:-langchain-rag-demo}
+      - PORT=8001
+    volumes:
+      - langchain_faiss:/app/faiss_index
+
+  llamaindex-backend:
+    profiles: ["llamaindex"]
+    build: ./llamaindex-backend
+    ports:
+      - 8002:8002
+    environment:
+      - OPENOBSERVE_URL=${OPENOBSERVE_URL}
+      - OPENOBSERVE_ORG=${OPENOBSERVE_ORG}
+      - OPENOBSERVE_AUTH_TOKEN=${OPENOBSERVE_AUTH_TOKEN}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - DEBUG=${DEBUG:-false}
+      - SERVICE_NAME=${LLAMAINDEX_SERVICE_NAME:-llamaindex-rag-demo}
+      - PORT=8002
+    volumes:
+      - llamaindex_store:/app/llamaindex_storage
+
+  frontend:
+    profiles: ["langchain", "llamaindex"]
+    build: ./frontend
+    ports:
+      - 3000:3000
+    environment:
+      - BACKEND_URL=${BACKEND_URL:-http://localhost:8001}
+
+volumes:
+  langchain_faiss:
+  llamaindex_store:
