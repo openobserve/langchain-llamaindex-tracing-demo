@@ -31,8 +31,22 @@ services:
     volumes:
       - llamaindex_store:/app/llamaindex_storage
 
+  langgraph-backend:
+    profiles: ["langgraph"]
+    build: ./langgraph-backend
+    ports:
+      - 8003:8003
+    environment:
+      - OPENOBSERVE_URL=${OPENOBSERVE_URL}
+      - OPENOBSERVE_ORG=${OPENOBSERVE_ORG}
+      - OPENOBSERVE_AUTH_TOKEN=${OPENOBSERVE_AUTH_TOKEN}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - DEBUG=${DEBUG:-false}
+      - SERVICE_NAME=${LANGGRAPH_SERVICE_NAME:-langgraph-agent-demo}
+      - PORT=8003
+
   frontend:
-    profiles: ["langchain", "llamaindex"]
+    profiles: ["langchain", "llamaindex", "langgraph"]
     build: ./frontend
     ports:
       - 3000:3000

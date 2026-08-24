@@ -13,10 +13,11 @@ echo "OpenObserve RAG Demo"
 echo "===================="
 echo ""
 echo "Which backend would you like to run?"
-echo "  1) LangChain"
-echo "  2) LlamaIndex"
+echo "  1) LangChain (RAG chain)"
+echo "  2) LlamaIndex (RAG chain)"
+echo "  3) LangGraph (tool-calling agent loop)"
 echo ""
-read -rp "Enter choice [1 or 2]: " choice
+read -rp "Enter choice [1, 2, or 3]: " choice
 
 case "$choice" in
   1)
@@ -27,8 +28,12 @@ case "$choice" in
     export BACKEND_URL=http://localhost:8002
     PROFILE=llamaindex
     ;;
+  3)
+    export BACKEND_URL=http://localhost:8003
+    PROFILE=langgraph
+    ;;
   *)
-    echo "Invalid choice. Please enter 1 or 2."
+    echo "Invalid choice. Please enter 1, 2, or 3."
     exit 1
     ;;
 esac
