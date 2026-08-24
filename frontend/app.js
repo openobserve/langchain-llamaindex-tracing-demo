@@ -11,7 +11,13 @@ async function loadConfig() {
     const response = await fetch("/config.json");
     const config = await response.json();
     backendUrl = config.BACKEND_URL || backendUrl;
-    backendName = backendUrl.includes("8002") ? "LlamaIndex" : "LangChain";
+    if (backendUrl.includes("8002")) {
+      backendName = "LlamaIndex";
+    } else if (backendUrl.includes("8003")) {
+      backendName = "LangGraph";
+    } else {
+      backendName = "LangChain";
+    }
     backendLabel.textContent = `Backend: ${backendName} (${backendUrl})`;
   } catch (err) {
     backendLabel.textContent = "Backend config unavailable";
@@ -116,7 +122,13 @@ chatForm.addEventListener("submit", async (event) => {
     });
     const result = await response.json();
     if (response.ok) {
-      appendMessage("assistant", result.answer || "No answer returned.", { traceId: result.trace_id });
+      const status = result.iterations
+        ? `Agent loop: ${result.iterations} iteration${result.iterations === 1 ? "" : "s"}`
+        : undefined;
+      appendMessage("assistant", result.answer || "No answer returned.", {
+        traceId: result.trace_id,
+        status,
+      });
     } else {
       appendMessage("assistant", result.detail || result.error || "Chat request failed.");
     }
